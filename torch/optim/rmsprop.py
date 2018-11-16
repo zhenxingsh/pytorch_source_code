@@ -82,10 +82,12 @@ class RMSprop(Optimizer):
 
                 if group['weight_decay'] != 0:
                     grad = grad.add(group['weight_decay'], p.data)
+                    ##torch.addcmul_(tensor,value,tensor1,tensor2,out=None)
+                    ##Tensor用tensor2对tensor1逐元素相乘，并对结果乘以标量值value然后加到tensor。张量的形状不需要匹配
+                    ##但元素数量必须一致。
+                square_avg.mul_(alpha).addcmul_(1 - alpha, grad, grad)  ##计算累积平方梯度
 
-                square_avg.mul_(alpha).addcmul_(1 - alpha, grad, grad)
-
-                if group['centered']:
+                if group['centered']:  ##’centered‘什么值？什么意思未理解
                     grad_avg = state['grad_avg']
                     grad_avg.mul_(alpha).add_(1 - alpha, grad)
                     avg = square_avg.addcmul(-1, grad_avg, grad_avg).sqrt().add_(group['eps'])
@@ -94,9 +96,11 @@ class RMSprop(Optimizer):
 
                 if group['momentum'] > 0:
                     buf = state['momentum_buffer']
+                    ##torch.addcdiv_(tensor,value=1,tensor1,tensor2,out=None)
+                    ##Tensor用tensor2对tensor1逐元素相除，然后乘以标量值value并加到tensor。
                     buf.mul_(group['momentum']).addcdiv_(grad, avg)
-                    p.data.add_(-group['lr'], buf)
+                    p.data.add_(-group['lr'], buf)  ##有动量
                 else:
-                    p.data.addcdiv_(-group['lr'], grad, avg)
+                    p.data.addcdiv_(-group['lr'], grad, avg)  ##参数更新，无动量
 
         return loss

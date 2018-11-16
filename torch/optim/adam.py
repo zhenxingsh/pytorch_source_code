@@ -90,8 +90,9 @@ class Adam(Optimizer):
                     grad.add_(group['weight_decay'], p.data)
 
                 # Decay the first and second moment running average coefficient
-                exp_avg.mul_(beta1).add_(1 - beta1, grad)
-                exp_avg_sq.mul_(beta2).addcmul_(1 - beta2, grad, grad)
+                ##beta1,beta2：矩估计的指数衰减速率，在区间[0,1)内。
+                exp_avg.mul_(beta1).add_(1 - beta1, grad)  ##更新有偏一阶矩估计
+                exp_avg_sq.mul_(beta2).addcmul_(1 - beta2, grad, grad)  ##更新有偏二阶矩估计
                 if amsgrad:
                     # Maintains the maximum of all 2nd moment running avg. till now
                     torch.max(max_exp_avg_sq, exp_avg_sq, out=max_exp_avg_sq)
