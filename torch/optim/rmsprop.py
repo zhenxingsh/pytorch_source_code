@@ -42,6 +42,10 @@ class RMSprop(Optimizer):
 
     def __setstate__(self, state):
         super(RMSprop, self).__setstate__(state)
+        
+        ##设置默认字典setdefault
+        #如果键不存在于字典中，将会添加新的键并将值设为默认值（改变了字典）。如果字典中包含有给定键，则
+        #返回该键对应的值，否则返回该键设置的值。
         for group in self.param_groups:
             group.setdefault('momentum', 0)
             group.setdefault('centered', False)

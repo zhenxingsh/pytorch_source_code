@@ -46,7 +46,7 @@ class RMSprop(Optimizer):
                 else:
                     avg=square_avg.sqrt().add_(group['eps'])
                 
-                if group['momentum']>0:
+                if  group['momentum']>0:
                     buf=state['momentum_buffer']
                     buf.mul_(group['momentum']).addcdiv_(grad,avg)
                     p.data.add_(-group['lr'],buf)
